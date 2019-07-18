@@ -8,7 +8,7 @@ import Marks from './Marks';
 import Handle from '../Handle';
 import * as utils from '../utils';
 
-function noop() {}
+function noop() { }
 
 export default function createSlider(Component) {
   return class ComponentEnhancer extends Component {
@@ -214,9 +214,15 @@ export default function createSlider(Component) {
     }
 
     addDocumentTouchEvents() {
-      // just work for Chrome iOS Safari and Android Browser
-      this.onTouchMoveListener = addEventListener(this.document, 'touchmove', this.onTouchMove);
-      this.onTouchUpListener = addEventListener(this.document, 'touchend', this.onEnd);
+      if (utils.isSafari) {
+        // just work for Chrome iOS Safari and Android Browser
+        this.onTouchMoveListener = this.document.addEventListener('touchmove', this.onTouchMove, { passive: false });
+        this.onTouchUpListener = addEventListener(this.document, 'touchend', this.onEnd);
+      } else {
+        // just work for Chrome iOS Safari and Android Browser
+        this.onTouchMoveListener = addEventListener(this.document, 'touchmove', this.onTouchMove);
+        this.onTouchUpListener = addEventListener(this.document, 'touchend', this.onEnd);
+      }
     }
 
     addDocumentMouseEvents() {
